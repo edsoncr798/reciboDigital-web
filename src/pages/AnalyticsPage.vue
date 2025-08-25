@@ -237,6 +237,7 @@ import {
   CircleCheck
 } from '@element-plus/icons-vue'
 import type { ReciboDigital } from '@/lib/database.types'
+import { formatMonthYearPeru } from '@/lib/utils'
 
 // Registrar componentes de Chart.js
 ChartJS.register(
@@ -304,8 +305,7 @@ const ingresosTrendData = computed(() => {
 
   const sortedWeeks = Object.keys(weeklyData).sort()
   const labels = sortedWeeks.map(week => {
-    const date = new Date(week)
-    return date.toLocaleDateString('es-PE', { month: 'short', day: 'numeric' })
+    return formatMonthYearPeru(week)
   })
   
   return {

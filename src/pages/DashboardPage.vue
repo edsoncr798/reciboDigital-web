@@ -85,6 +85,8 @@
               <div class="text-center">
                 <el-icon class="text-4xl mb-2"><Document /></el-icon>
                 <p>No hay datos disponibles</p>
+                <p class="text-sm mt-2">Intenta cambiar el rango de fechas</p>
+                <p class="text-xs text-gray-400 mt-1">Rango actual: {{ dateRange[0] }} - {{ dateRange[1] }}</p>
               </div>
             </div>
           </div>
@@ -104,6 +106,8 @@
             <div class="text-center">
               <el-icon class="text-4xl mb-2"><Document /></el-icon>
               <p>No hay datos disponibles</p>
+              <p class="text-sm mt-2">Intenta cambiar el rango de fechas</p>
+              <p class="text-xs text-gray-400 mt-1">Rango actual: {{ dateRange[0] }} - {{ dateRange[1] }}</p>
             </div>
           </div>
         </div>
@@ -213,6 +217,7 @@ import {
   InfoFilled
 } from '@element-plus/icons-vue'
 import type { ReciboDigital } from '@/lib/database.types'
+import { formatMonthYearPeru } from '@/lib/utils'
 
 // Registrar componentes de Chart.js
 ChartJS.register(
@@ -227,18 +232,26 @@ ChartJS.register(
 )
 
 const auth = useAuth()
-const { obtenerRecibos, obtenerEstadisticas, loading: recibosLoading } = useRecibos()
+const { 
+  obtenerRecibos, 
+  obtenerEstadisticas, 
+  loading: recibosLoading,
+  recibos,
+  estadisticas
+} = useRecibos()
 
 // Estado reactivo
 const loading = ref(false)
-const dateRange = ref<[string, string]>(['2024-01-01', '2024-12-31'])
+const dateRange = ref<[string, string]>(['2025-01-01', '2025-12-31'])
 const chartPeriod = ref('30d')
-const recibos = ref<ReciboDigital[]>([])
-const estadisticas = ref<any>(null)
 
-// Métricas principales calculadas desde datos reales
+// Métricas principales calculadas desde datos reales del estado global
 const metrics = computed(() => {
-  if (recibos.value.length === 0) {
+  console.log('📊 Dashboard metrics - recibos.value:', recibos.value?.length || 0)
+  console.log('📊 Dashboard metrics - recibos data:', recibos.value)
+  
+  if (!recibos.value || recibos.value.length === 0) {
+    console.log('⚠️ Dashboard metrics - No hay datos de recibos disponibles')
     return {
       totalRecibos: 0,
       cambioRecibos: 0,
@@ -253,15 +266,17 @@ const metrics = computed(() => {
 
   const totalRecibos = recibos.value.length
   const ingresosTotales = recibos.value.reduce((sum, recibo) => {
-    return sum + (parseFloat(recibo.MontoPagado?.toString() || '0') || 0)
+    const monto = parseFloat(recibo.MontoPagado?.toString() || '0') || 0
+    return sum + monto
   }, 0)
   const saldoPendiente = recibos.value.reduce((sum, recibo) => {
-    return sum + (parseFloat(recibo.SaldoPendiente?.toString() || '0') || 0)
+    const saldo = parseFloat(recibo.SaldoPendiente?.toString() || '0') || 0
+    return sum + saldo
   }, 0)
   const recibosCancelados = recibos.value.filter(r => r.EstadoPago === 'Cancelado').length
   const recibosActivos = recibos.value.filter(r => r.Estado === 'procesado').length
   
-  return {
+  const calculatedMetrics = {
     totalRecibos,
     cambioRecibos: 0, // Se calcularía comparando con período anterior
     ingresosTotales,
@@ -271,11 +286,17 @@ const metrics = computed(() => {
     saldoPendiente,
     cambioSaldo: 0
   }
+  
+  console.log('✅ Dashboard metrics calculadas:', calculatedMetrics)
+  return calculatedMetrics
 })
 
 // Datos para gráfico de líneas basados en datos reales
 const lineChartData = computed(() => {
+  console.log('📈 Dashboard lineChart - recibos.value:', recibos.value?.length || 0)
+  
   if (recibos.value.length === 0) {
+    console.log('⚠️ Dashboard lineChart - No hay datos para el gráfico')
     return {
       labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
       datasets: [
@@ -316,9 +337,7 @@ const lineChartData = computed(() => {
 
   const sortedMonths = Object.keys(monthlyData).sort()
   const labels = sortedMonths.map(month => {
-    const [year, monthNum] = month.split('-')
-    const date = new Date(parseInt(year), parseInt(monthNum) - 1)
-    return date.toLocaleDateString('es-PE', { month: 'short', year: '2-digit' })
+    return formatMonthYearPeru(month + '-01')
   })
   
   const recibosData = sortedMonths.map(month => monthlyData[month].count)
@@ -395,7 +414,7 @@ const doughnutChartData = computed(() => {
   }, {} as Record<string, number>)
 
   const labels = Object.keys(estadosCounts)
-  const data = Object.values(estadosCounts)
+  const data = Object.values(estadosCounts) as number[]
   const colors = {
     'Cancelado': '#10b981',
     'Parcial': '#f59e0b', 
@@ -460,33 +479,32 @@ const refreshData = async () => {
       fechaFin: dateRange.value[1]
     }
     
-    console.log('Cargando datos del dashboard con filtros:', filtros)
+    console.log('🔄 Dashboard: Cargando datos con filtros:', filtros)
+    console.log('📅 Dashboard: Rango de fechas actual:', dateRange.value)
     
-    const recibosResult = await obtenerRecibos(filtros)
+    // Llamar a las funciones del composable - el estado se actualiza automáticamente
+    const [recibosResult, estadisticasResult] = await Promise.all([
+      obtenerRecibos(filtros),
+      obtenerEstadisticas(filtros)
+    ])
     
-    if (recibosResult.success && recibosResult.data) {
-      recibos.value = recibosResult.data
-      console.log('Recibos cargados:', recibos.value.length)
-    } else {
-      console.warn('No se pudieron cargar los recibos:', recibosResult)
-      recibos.value = []
-    }
+    console.log('✅ Dashboard: Datos cargados desde estado global')
+    console.log('📊 Recibos en estado global:', recibos.value?.length || 0)
+    console.log('📈 Resultado obtenerRecibos:', recibosResult)
+    console.log('📊 Resultado obtenerEstadisticas:', estadisticasResult)
+    console.log('🗂️ Estado de recibos después de cargar:', {
+      total: recibos.value?.length || 0,
+      primeros3: recibos.value?.slice(0, 3) || [],
+      loading: recibosLoading.value
+    })
     
-    // Intentar cargar estadísticas si está disponible
-    try {
-      const estadisticasResult = await obtenerEstadisticas(filtros)
-      if (estadisticasResult.success) {
-        estadisticas.value = estadisticasResult.data
-      }
-    } catch (statsError) {
-      console.warn('Estadísticas no disponibles:', statsError)
-      estadisticas.value = null
+    if (!recibos.value || recibos.value.length === 0) {
+      console.log('⚠️ Dashboard: No se encontraron recibos en el rango de fechas especificado')
+      console.log('💡 Dashboard: Sugerencia - Verificar si hay datos en el rango 2025-01-01 a 2025-12-31')
     }
     
   } catch (error) {
-    console.error('Error cargando datos del dashboard:', error)
-    recibos.value = []
-    estadisticas.value = null
+    console.error('💥 Dashboard: Error cargando datos:', error)
   } finally {
     loading.value = false
   }

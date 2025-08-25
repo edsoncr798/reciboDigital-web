@@ -8,7 +8,7 @@
           </el-button>
           <div v-if="recibo">
             <h1 class="text-2xl font-bold text-gray-800 mb-2">Recibo {{ recibo.NumeroRecibo }}</h1>
-            <p class="text-gray-600">{{ recibo.ClienteNombre }} - {{ formatDate(recibo.FechaGeneracion) }}</p>
+            <p class="text-gray-600">{{ recibo.ClienteNombre }} - {{ formatDateTimePeru(recibo.FechaGeneracion) }}</p>
           </div>
           <div v-else>
             <h1 class="text-2xl font-bold text-gray-800 mb-2">Detalle del Recibo</h1>
@@ -66,7 +66,7 @@
             
             <div class="info-item">
               <label class="info-label">Fecha de Generación</label>
-              <p class="info-value">{{ formatDate(recibo.FechaGeneracion) }}</p>
+              <p class="info-value">{{ formatDateTimePeru(recibo.FechaGeneracion) }}</p>
             </div>
             
             <div class="info-item">
@@ -249,6 +249,7 @@ import { useRecibos } from '@/composables/useRecibos'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft, Download, Edit, Document, Loading } from '@element-plus/icons-vue'
 import type { ReciboDigital } from '@/lib/database.types'
+import { formatDateTimePeru } from '@/lib/utils'
 
 const route = useRoute()
 const { obtenerReciboPorNumero } = useRecibos()
@@ -294,15 +295,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount)
 }
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('es-PE', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+// Función de formato de fecha ahora importada desde @/lib/utils
 
 const getEstadoTagType = (estado: string) => {
   const types: Record<string, string> = {

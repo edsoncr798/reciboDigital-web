@@ -135,7 +135,7 @@
         <el-table-column prop="NumeroRecibo" label="Número" width="120" sortable />
         <el-table-column prop="FechaGeneracion" label="Fecha" width="120" sortable>
           <template #default="{ row }">
-            {{ formatDateShort(row.FechaGeneracion) }}
+            {{ formatDateShortPeru(row.FechaGeneracion) }}
           </template>
         </el-table-column>
         <el-table-column prop="ClienteNombre" label="Cliente" min-width="150" sortable />
@@ -182,6 +182,7 @@ import {
   TrendCharts
 } from '@element-plus/icons-vue'
 import type { ReciboDigital } from '@/lib/database.types'
+import { formatDateShortPeru } from '@/lib/utils'
 
 const { obtenerRecibos, buscarRecibos, loading } = useRecibos()
 
@@ -283,9 +284,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount)
 }
 
-const formatDateShort = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('es-PE')
-}
+// Función de formato de fecha ahora importada desde @/lib/utils
 
 const getEstadoTagType = (estado: string) => {
   const types: Record<string, string> = {

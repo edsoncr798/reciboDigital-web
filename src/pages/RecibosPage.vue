@@ -111,8 +111,8 @@
       <el-card class="stat-card" shadow="hover">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm text-gray-600">Activos</p>
-            <p class="text-2xl font-bold text-green-600">{{ stats.activos }}</p>
+            <p class="text-sm text-gray-600">Cancelados</p>
+            <p class="text-2xl font-bold text-green-600">{{ stats.cancelados }}</p>
           </div>
           <el-icon class="text-3xl text-green-500"><SuccessFilled /></el-icon>
         </div>
@@ -121,7 +121,7 @@
       <el-card class="stat-card" shadow="hover">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm text-gray-600">Pendientes</p>
+            <p class="text-sm text-gray-600">Amortizaciones</p>
             <p class="text-2xl font-bold text-yellow-600">{{ stats.pendientes }}</p>
           </div>
           <el-icon class="text-3xl text-yellow-500"><Clock /></el-icon>
@@ -236,8 +236,8 @@
           <el-table-column prop="FechaGeneracion" label="Fecha" width="120" sortable>
             <template #default="{ row }">
               <div class="text-sm">
-                <p class="font-medium">{{ formatDate(row.FechaGeneracion) }}</p>
-                <p class="text-gray-500">{{ formatTime(row.FechaGeneracion) }}</p>
+                <p class="font-medium">{{ formatDatePeru(row.FechaGeneracion) }}</p>
+                <p class="text-gray-500">{{ formatTimePeru(row.FechaGeneracion) }}</p>
               </div>
             </template>
           </el-table-column>
@@ -342,11 +342,16 @@ import {
   MoreFilled,
   View,
   Edit,
-  Close
+  Close,
+  Filter,
+  Delete,
+  Calendar
 } from '@element-plus/icons-vue'
 import ReciboCard from '@/components/ReciboCard.vue'
 import ReciboForm from '@/components/ReciboForm.vue'
+import Empty from '@/components/Empty.vue'
 import type { ReciboDigital, ReciboFilters } from '@/lib/database.types'
+import { formatDatePeru, formatTimePeru } from '@/lib/utils'
 
 const router = useRouter()
 const auth = useAuth()
@@ -569,22 +574,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount)
 }
 
-const formatDate = (timestamp: any) => {
-  const date = timestamp instanceof Date ? timestamp : 
-               timestamp?.toDate ? timestamp.toDate() : 
-               new Date(timestamp)
-  return date.toLocaleDateString('es-PE')
-}
-
-const formatTime = (timestamp: any) => {
-  const date = timestamp instanceof Date ? timestamp : 
-               timestamp?.toDate ? timestamp.toDate() : 
-               new Date(timestamp)
-  return date.toLocaleTimeString('es-PE', {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+// Funciones de formato de fecha ahora importadas desde @/lib/utils
 
 const getEstadoTagType = (estado: string) => {
   const types: Record<string, string> = {

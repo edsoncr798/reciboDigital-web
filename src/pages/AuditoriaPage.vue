@@ -140,7 +140,7 @@
       >
         <el-table-column prop="timestamp" label="Fecha/Hora" width="180" sortable>
           <template #default="{ row }">
-            {{ formatDateTime(row.timestamp) }}
+            {{ formatDateTimePeru(row.timestamp) }}
           </template>
         </el-table-column>
         
@@ -183,7 +183,7 @@
     <el-dialog v-model="dialogDetalles" title="Detalles del Evento" width="600px">
       <div v-if="eventoSeleccionado">
         <el-descriptions :column="1" border>
-          <el-descriptions-item label="Timestamp">{{ formatDateTime(eventoSeleccionado.timestamp) }}</el-descriptions-item>
+          <el-descriptions-item label="Timestamp">{{ formatDateTimePeru(eventoSeleccionado.timestamp) }}</el-descriptions-item>
           <el-descriptions-item label="Usuario">{{ eventoSeleccionado.usuario }}</el-descriptions-item>
           <el-descriptions-item label="Actividad">{{ getActividadLabel(eventoSeleccionado.tipoActividad) }}</el-descriptions-item>
           <el-descriptions-item label="IP">{{ eventoSeleccionado.ip }}</el-descriptions-item>
@@ -224,6 +224,7 @@ import {
   Setting
 } from '@element-plus/icons-vue'
 import type { ReciboDigital } from '@/lib/database.types'
+import { formatDateTimePeru } from '@/lib/utils'
 
 const { obtenerRecibos, loading } = useRecibos()
 
@@ -365,9 +366,7 @@ const handleSortChange = ({ prop, order }: any) => {
   console.log('Sort:', prop, order)
 }
 
-const formatDateTime = (dateString: string) => {
-  return new Date(dateString).toLocaleString('es-PE')
-}
+// Función de formato de fecha ahora importada desde @/lib/utils
 
 const getSeveridadTagType = (severidad: string) => {
   const types: Record<string, string> = {

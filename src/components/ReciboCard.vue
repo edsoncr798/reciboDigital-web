@@ -85,8 +85,8 @@
           <span class="text-sm text-gray-600">Fecha de Generación</span>
         </div>
         <div class="text-right">
-          <p class="text-sm font-medium text-gray-800">{{ formatDate(recibo.FechaGeneracion) }}</p>
-          <p class="text-xs text-gray-500">{{ formatTime(recibo.FechaGeneracion) }}</p>
+          <p class="text-sm font-medium text-gray-800">{{ formatDatePeru(recibo.FechaGeneracion) }}</p>
+              <p class="text-xs text-gray-500">{{ formatTimePeru(recibo.FechaGeneracion) }}</p>
         </div>
       </div>
       
@@ -156,7 +156,8 @@ import {
   Calendar,
   CopyDocument
 } from '@element-plus/icons-vue'
-import type { ReciboDigital } from '@/lib/database.types'
+import type { ReciboDigital, UsuarioApp } from '@/lib/database.types'
+import { formatDatePeru, formatTimePeru } from '@/lib/utils'
 
 type Recibo = ReciboDigital
 
@@ -211,22 +212,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount)
 }
 
-const formatDate = (timestamp: any) => {
-  const date = timestamp instanceof Date ? timestamp : 
-               timestamp?.toDate ? timestamp.toDate() : 
-               new Date(timestamp)
-  return date.toLocaleDateString('es-PE')
-}
-
-const formatTime = (timestamp: any) => {
-  const date = timestamp instanceof Date ? timestamp : 
-               timestamp?.toDate ? timestamp.toDate() : 
-               new Date(timestamp)
-  return date.toLocaleTimeString('es-PE', {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+// Funciones de formato de fecha ahora importadas desde @/lib/utils
 
 const getEstadoTagType = (estado: string) => {
   const types: Record<string, string> = {

@@ -153,13 +153,13 @@
         
         <el-table-column prop="fechaCreacion" label="Fecha Creación" width="150">
           <template #default="{ row }">
-            {{ formatDate(row.fechaCreacion) }}
+            {{ formatDateTimePeru(row.fechaCreacion) }}
           </template>
         </el-table-column>
         
         <el-table-column prop="fechaUltimoAcceso" label="Último Acceso" width="150">
           <template #default="{ row }">
-            {{ row.fechaUltimoAcceso ? formatDate(row.fechaUltimoAcceso) : 'Nunca' }}
+            {{ row.fechaUltimoAcceso ? formatDateTimePeru(row.fechaUltimoAcceso) : 'Nunca' }}
           </template>
         </el-table-column>
         
@@ -375,8 +375,8 @@
             <div class="space-y-2">
               <div><span class="text-gray-500">Teléfono:</span> {{ selectedUser.telefono || 'No especificado' }}</div>
               <div><span class="text-gray-500">Departamento:</span> {{ selectedUser.departamento || 'No especificado' }}</div>
-              <div><span class="text-gray-500">Fecha de creación:</span> {{ formatDate(selectedUser.fechaCreacion) }}</div>
-              <div><span class="text-gray-500">Último acceso:</span> {{ selectedUser.fechaUltimoAcceso ? formatDate(selectedUser.fechaUltimoAcceso) : 'Nunca' }}</div>
+              <div><span class="text-gray-500">Fecha de creación:</span> {{ formatDateTimePeru(selectedUser.fechaCreacion) }}</div>
+          <div><span class="text-gray-500">Último acceso:</span> {{ selectedUser.fechaUltimoAcceso ? formatDateTimePeru(selectedUser.fechaUltimoAcceso) : 'Nunca' }}</div>
               <div><span class="text-gray-500">Creado por:</span> {{ selectedUser.creadoPor }}</div>
             </div>
           </div>
@@ -444,6 +444,7 @@ import type {
   CreateUserProfile
 } from '@/lib/database.types'
 import { debounce } from 'lodash-es'
+import { formatDateTimePeru } from '@/lib/utils'
 
 // Composables
 const {
@@ -599,15 +600,7 @@ const getPermissionLabel = (permission: string): string => {
   return labels[permission] || permission
 }
 
-const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString('es-ES', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+// Función de formato de fecha ahora importada desde @/lib/utils
 
 const canAssignRole = (role: UserRole): boolean => {
   if (!currentUser.value) return false
