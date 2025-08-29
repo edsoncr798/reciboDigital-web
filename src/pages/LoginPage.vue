@@ -114,32 +114,17 @@
             
             <!-- Demo credentials -->
             <div class="mt-8 p-4 bg-gray-50 rounded-lg">
-              <h4 class="text-sm font-semibold text-gray-700 mb-3">Credenciales de prueba:</h4>
+              <h4 class="text-sm font-semibold text-gray-700 mb-3">Credenciales de acceso:</h4>
               <div class="space-y-3">
                 <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
                   <div class="text-xs text-gray-600">
-                    <div class="font-medium text-gray-800">Administrador</div>
-                    <div>admin@miscomprobantes.com</div>
+                    <div class="font-medium text-gray-800">Edson (Desarrollador)</div>
+                    <div>edsoncr798@gmail.com</div>
                   </div>
                   <el-button 
                     size="small" 
-                    type="primary" 
-                    @click="loadDemoCredentials('admin')"
-                    class="demo-btn"
-                  >
-                    Usar
-                  </el-button>
-                </div>
-                
-                <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
-                  <div class="text-xs text-gray-600">
-                    <div class="font-medium text-gray-800">Auditor</div>
-                    <div>auditor@miscomprobantes.com</div>
-                  </div>
-                  <el-button 
-                    size="small" 
-                    type="info" 
-                    @click="loadDemoCredentials('auditor')"
+                    type="success" 
+                    @click="loadDemoCredentials()"
                     class="demo-btn"
                   >
                     Usar
@@ -147,7 +132,7 @@
                 </div>
                 
                 <div class="text-xs text-gray-500 text-center mt-2">
-                  <strong>Contraseña para ambos:</strong> password123
+                  <strong>Contraseña:</strong> Edsondev98
                 </div>
               </div>
             </div>
@@ -215,13 +200,9 @@ const handleLogin = async () => {
 }
 
 // Cargar credenciales demo
-const loadDemoCredentials = (type: 'admin' | 'auditor') => {
-  if (type === 'admin') {
-    loginForm.email = 'admin@miscomprobantes.com'
-  } else {
-    loginForm.email = 'auditor@miscomprobantes.com'
-  }
-  loginForm.password = 'password123'
+const loadDemoCredentials = () => {
+  loginForm.email = 'edsoncr798@gmail.com'
+  loginForm.password = 'Edsondev98'
 }
 
 onMounted(() => {
