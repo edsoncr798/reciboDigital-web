@@ -5,11 +5,13 @@
  * Crea la colección 'userProfile' con la estructura necesaria
  */
 
-const { initializeApp } = require('firebase/app')
-const { getFirestore, doc, setDoc, collection, addDoc } = require('firebase/firestore')
-const { getAuth, createUserWithEmailAndPassword } = require('firebase/auth')
-const readline = require('readline')
-require('dotenv').config()
+import { initializeApp } from 'firebase/app'
+import { getFirestore, doc, setDoc, collection, addDoc } from 'firebase/firestore'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import readline from 'readline'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 // Configuración de Firebase desde variables de entorno
 const firebaseConfig = {
@@ -259,8 +261,4 @@ const setupAdmin = async () => {
 }
 
 // Ejecutar script
-if (require.main === module) {
-  setupAdmin()
-}
-
-module.exports = { setupAdmin, createUserProfile, rolePermissions }
+setupAdmin()
